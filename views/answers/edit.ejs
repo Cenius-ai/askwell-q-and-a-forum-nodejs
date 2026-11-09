@@ -1,0 +1,25 @@
+<section class="page-head">
+  <p class="eyebrow"><a href="/questions/<%= answer.question_id %>">Back to the question</a></p>
+  <h1>Edit your answer</h1>
+  <p class="lede">Only you can edit this answer. The question author keeps their accepted choice.</p>
+</section>
+
+<form class="panel form" method="post" action="/answers/<%= answer.id %>" novalidate>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <div class="field<%= error ? ' field--invalid' : '' %>">
+    <label class="label" for="body">Answer</label>
+    <textarea class="input textarea" id="body" name="body" rows="9" required
+              <%= error ? 'aria-invalid="true" aria-describedby="body-error"' : '' %>><%= values.body %></textarea>
+    <% if (error) { %>
+      <p class="field-error" id="body-error"><%= error %></p>
+    <% } else { %>
+      <p class="hint">At least 10 characters.</p>
+    <% } %>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">Save answer</button>
+    <a class="btn btn-ghost" href="/questions/<%= answer.question_id %>#answer-<%= answer.id %>">Cancel</a>
+  </div>
+</form>

@@ -1,0 +1,16 @@
+<span class="badge" title="<%= badge.description %>">
+  <span class="badge__icon" aria-hidden="true">
+    <% if (badge.code === 'first-question') { %>
+      <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5 12 7l5 .7-3.6 3.4.9 4.9L10 13.7 5.7 16l.9-4.9L3 7.7 8 7Z"/></svg>
+    <% } else if (badge.code === 'first-answer') { %>
+      <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5A2 2 0 0 1 5.5 3.5h9a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H9l-4 3.5v-3.5H5.5a2 2 0 0 1-2-2Z"/></svg>
+    <% } else if (badge.code === 'accepted') { %>
+      <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 8 14.5 16 5.5"/></svg>
+    <% } else if (badge.code === 'good-answer') { %>
+      <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><path d="m10 6.5 1.6 2.4 2.4.4-1.8 1.9.4 2.8L10 12.6 7.4 14l.4-2.8L6 9.3l2.4-.4Z"/></svg>
+    <% } else { %>
+      <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15V5M5.5 9.5 10 5l4.5 4.5"/></svg>
+    <% } %>
+  </span>
+  <span class="badge__label"><%= badge.name %></span>
+</span>

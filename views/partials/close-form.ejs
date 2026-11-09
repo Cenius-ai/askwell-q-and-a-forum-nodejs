@@ -1,0 +1,34 @@
+<% if (isModerator) { %>
+  <% if (question.closed_at) { %>
+    <div class="mod-block">
+      <form method="post" action="/questions/<%= question.id %>/reopen" class="inline-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button class="btn btn-ghost btn-sm" type="submit">Reopen question</button>
+      </form>
+      <p class="hint">Reopening clears the close reason and any duplicate link.</p>
+    </div>
+  <% } else { %>
+    <details class="mod-panel">
+      <summary class="mod-panel__summary">Moderator: close or mark as duplicate</summary>
+      <form method="post" action="/questions/<%= question.id %>/close" class="form form--compact">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="field">
+          <label class="label" for="reason">Close reason</label>
+          <select class="input" id="reason" name="reason" required>
+            <% closeReasons.forEach(function (reason, index) { %>
+              <option value="<%= reason %>"<%= index === 1 ? ' selected' : '' %>><%= reason %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="field">
+          <label class="label" for="duplicateOfId">Duplicate of question id <span class="label__optional">(optional)</span></label>
+          <input class="input" id="duplicateOfId" name="duplicateOfId" type="number" min="1" step="1" inputmode="numeric" placeholder="e.g. 2">
+          <p class="hint">Links this page to a canonical question. Leave empty when it is not a duplicate.</p>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary btn-sm" type="submit">Close question</button>
+        </div>
+      </form>
+    </details>
+  <% } %>
+<% } %>

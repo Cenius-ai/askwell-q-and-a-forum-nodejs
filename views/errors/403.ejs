@@ -1,0 +1,13 @@
+<section class="error-page panel">
+  <p class="error-page__code">403</p>
+  <h1 class="error-page__title">You cannot do that</h1>
+  <p class="error-page__text"><%= typeof message !== 'undefined' && message ? message : 'Your account does not have permission for this action.' %></p>
+  <div class="error-page__actions">
+    <a class="btn btn-primary" href="/">Back to questions</a>
+    <% if (typeof user !== 'undefined' && user) { %>
+      <a class="btn btn-ghost" href="/dashboard">Your dashboard</a>
+    <% } else { %>
+      <a class="btn btn-ghost" href="/login">Sign in</a>
+    <% } %>
+  </div>
+</section>

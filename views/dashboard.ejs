@@ -1,0 +1,162 @@
+<section class="page-head page-head--row">
+  <div>
+    <p class="eyebrow">Your activity</p>
+    <h1>Your dashboard</h1>
+    <p class="lede">Reputation, badges, questions and answers — everything tied to your account.</p>
+  </div>
+  <div class="page-head__actions">
+    <a class="btn btn-primary" href="/questions/new">Ask a question</a>
+    <a class="btn btn-ghost" href="/tags">Find tags to follow</a>
+  </div>
+</section>
+
+<section class="dash-top">
+  <div class="panel reputation-card">
+    <p class="reputation-card__label">Reputation</p>
+    <p class="reputation-card__value"><%= formatNumber(user.reputation) %></p>
+    <p class="reputation-card__note">
+      <% if (user.role === 'moderator') { %>Moderator<% } else { %>Member<% } %>
+      · joined <time datetime="<%= isoTime(user.created_at) %>"><%= formatDate(user.created_at) %></time>
+    </p>
+    <dl class="reputation-stats">
+      <div>
+        <dt>Answers</dt>
+        <dd><%= totals.answer_count %></dd>
+      </div>
+      <div>
+        <dt>Accepted</dt>
+        <dd><%= totals.accepted_count %></dd>
+      </div>
+      <div>
+        <dt>Questions</dt>
+        <dd><%= myQuestions.length %></dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="panel">
+    <div class="panel__head">
+      <h2 class="panel__title">Badges</h2>
+      <span class="panel__meta"><%= earnedBadges.length %> of <%= allBadges.length %></span>
+    </div>
+    <% if (earnedBadges.length === 0) { %>
+      <div class="empty empty--compact">
+        <p class="empty__text">No badges yet. Ask a question or post an answer to earn the first one.</p>
+      </div>
+    <% } else { %>
+      <div class="badge-shelf">
+        <% earnedBadges.forEach(function (badge) { %>
+          <%- include('partials/badge', { badge: badge }) %>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <h3 class="subhead">Recent reputation</h3>
+    <% if (activity.length === 0) { %>
+      <p class="meta-text">No reputation events yet.</p>
+    <% } else { %>
+      <ul class="activity-list">
+        <% activity.forEach(function (entry) { %>
+          <li class="activity-row">
+            <span class="activity-row__delta <%= entry.delta >= 0 ? 'is-up' : 'is-down' %>"><%= entry.delta > 0 ? '+' + entry.delta : entry.delta %></span>
+            <span class="activity-row__label"><%= entry.label %></span>
+            <span class="meta-text"><%= timeAgo(entry.created_at) %></span>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </div>
+</section>
+
+<section class="panel" aria-labelledby="my-questions-heading">
+  <div class="panel__head">
+    <h2 class="panel__title" id="my-questions-heading">Your questions</h2>
+    <span class="panel__meta"><%= myQuestions.length %></span>
+  </div>
+
+  <% if (myQuestions.length === 0) { %>
+    <div class="empty">
+      <p class="empty__title">You have not asked anything yet</p>
+      <p class="empty__text">The community is here for the question you are stuck on right now.</p>
+      <a class="btn btn-primary btn-sm" href="/questions/new">Ask your first question</a>
+    </div>
+  <% } else { %>
+    <table class="data-table">
+      <caption class="visually-hidden">Your questions with score and answer counts</caption>
+      <thead>
+        <tr>
+          <th scope="col">Question</th>
+          <th scope="col" class="num">Score</th>
+          <th scope="col" class="num">Answers</th>
+          <th scope="col">Asked</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% myQuestions.forEach(function (question) { %>
+          <tr>
+            <td>
+              <a class="data-table__title" href="/questions/<%= question.id %>"><%= question.title %></a>
+              <% if (question.closed_at) { %><span class="status-flag">Closed</span><% } %>
+            </td>
+            <td class="num"><%= question.score %></td>
+            <td class="num"><%= question.answer_count %><% if (question.has_accepted) { %><span class="solved-dot" title="Has an accepted answer">accepted</span><% } %></td>
+            <td><time datetime="<%= isoTime(question.created_at) %>"><%= timeAgo(question.created_at) %></time></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</section>
+
+<section class="panel" aria-labelledby="my-answers-heading">
+  <div class="panel__head">
+    <h2 class="panel__title" id="my-answers-heading">Your answers</h2>
+    <span class="panel__meta"><%= myAnswers.length %></span>
+  </div>
+
+  <% if (myAnswers.length === 0) { %>
+    <div class="empty">
+      <p class="empty__title">No answers yet</p>
+      <p class="empty__text">Answering is the fastest way to earn reputation — start with a question you know well.</p>
+      <a class="btn btn-primary btn-sm" href="/">Browse open questions</a>
+    </div>
+  <% } else { %>
+    <ul class="answer-links">
+      <% myAnswers.forEach(function (answer) { %>
+        <li class="answer-link">
+          <span class="answer-link__score<%= answer.accepted ? ' is-accepted' : '' %>">
+            <%= answer.score %><span class="answer-link__score-label">score</span>
+          </span>
+          <span class="answer-link__body">
+            <a class="answer-link__question" href="/questions/<%= answer.question_id %>#answer-<%= answer.id %>"><%= answer.question_title %></a>
+            <span class="meta-text">
+              answered <time datetime="<%= isoTime(answer.created_at) %>"><%= timeAgo(answer.created_at) %></time>
+              <% if (answer.accepted) { %>· <span class="accepted-inline">accepted</span><% } %>
+            </span>
+          </span>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</section>
+
+<section class="panel" aria-labelledby="followed-heading">
+  <div class="panel__head">
+    <h2 class="panel__title" id="followed-heading">Tags you follow</h2>
+    <span class="panel__meta"><%= followed.length %></span>
+  </div>
+
+  <% if (followed.length === 0) { %>
+    <div class="empty">
+      <p class="empty__title">You are not following any tags</p>
+      <p class="empty__text">Following a tag keeps its questions a click away.</p>
+      <a class="btn btn-primary btn-sm" href="/tags">Browse tags to follow</a>
+    </div>
+  <% } else { %>
+    <div class="tag-list">
+      <% followed.forEach(function (tag) { %>
+        <%- include('partials/tag-chip', { tag: tag, count: tag.question_count }) %>
+      <% }) %>
+    </div>
+  <% } %>
+</section>

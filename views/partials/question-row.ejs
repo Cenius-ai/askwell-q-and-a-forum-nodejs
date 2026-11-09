@@ -1,0 +1,28 @@
+<li class="question-row<%= question.closed_at ? ' is-closed' : '' %>">
+  <div class="question-row__stats">
+    <span class="stat-cell<%= question.score > 0 ? ' is-positive' : '' %>" title="Score">
+      <span class="stat-cell__value"><%= question.score %></span>
+      <span class="stat-cell__label">score</span>
+    </span>
+    <span class="stat-cell<%= question.has_accepted ? ' is-accepted' : '' %>" title="Answers">
+      <span class="stat-cell__value"><%= question.answer_count %></span>
+      <span class="stat-cell__label"><%= question.has_accepted ? 'solved' : 'answers' %></span>
+    </span>
+  </div>
+  <div class="question-row__body">
+    <h3 class="question-row__title">
+      <a href="/questions/<%= question.id %>"><%= question.title %></a>
+      <% if (question.closed_at) { %><span class="status-flag">Closed</span><% } %>
+    </h3>
+    <div class="question-row__meta">
+      <span class="tag-list tag-list--inline">
+        <% question.tags.forEach(function (tag) { %><%- include('tag-chip', { tag: tag, extraClass: 'tag-chip--sm' }) %><% }) %>
+      </span>
+      <span class="meta-text">
+        asked <time datetime="<%= isoTime(question.created_at) %>"><%= timeAgo(question.created_at) %></time>
+        by <span class="author-inline"><%= question.author_name %></span>
+        <span class="rep" title="Author reputation"><%= formatNumber(question.author_reputation) %></span>
+      </span>
+    </div>
+  </div>
+</li>

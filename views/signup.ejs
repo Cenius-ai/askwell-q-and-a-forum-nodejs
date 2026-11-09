@@ -1,0 +1,72 @@
+<section class="auth-shell">
+  <div class="auth-card panel">
+    <p class="eyebrow">Join the community</p>
+    <h1 class="auth-card__title">Create your Askwell account</h1>
+    <p class="lede">Ask questions, share answers, and build a reputation that shows up beside everything you post.</p>
+
+    <% if (formError) { %>
+      <div class="alert alert--error" role="alert"><span class="alert__text"><%= formError %></span></div>
+    <% } %>
+
+    <form class="form" method="post" action="/signup" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="field<%= errors.displayName ? ' field--invalid' : '' %>">
+        <label class="label" for="displayName">Display name</label>
+        <input class="input" id="displayName" name="displayName" type="text" value="<%= values.displayName %>"
+               autocomplete="nickname" required maxlength="40"
+               <%= errors.displayName ? 'aria-invalid="true" aria-describedby="displayName-error"' : '' %>>
+        <% if (errors.displayName) { %>
+          <p class="field-error" id="displayName-error"><%= errors.displayName %></p>
+        <% } else { %>
+          <p class="hint">2–40 characters. This is the name shown on your posts.</p>
+        <% } %>
+      </div>
+
+      <div class="field<%= errors.email ? ' field--invalid' : '' %>">
+        <label class="label" for="email">Email</label>
+        <input class="input" id="email" name="email" type="email" value="<%= values.email %>"
+               autocomplete="username" autocapitalize="none" spellcheck="false" required
+               <%= errors.email ? 'aria-invalid="true" aria-describedby="email-error"' : '' %>>
+        <% if (errors.email) { %>
+          <p class="field-error" id="email-error"><%= errors.email %></p>
+        <% } else { %>
+          <p class="hint">Used only to sign in. Nothing is emailed in this self-hosted demo.</p>
+        <% } %>
+      </div>
+
+      <div class="field<%= errors.password ? ' field--invalid' : '' %>">
+        <label class="label" for="password">Password</label>
+        <div class="input-group">
+          <input class="input" id="password" name="password" type="password" autocomplete="new-password" required
+                 <%= errors.password ? 'aria-invalid="true" aria-describedby="password-error"' : '' %>>
+          <button class="input-group__toggle" type="button" data-toggle-password="password"
+                  aria-controls="password" aria-pressed="false">Show</button>
+        </div>
+        <% if (errors.password) { %>
+          <p class="field-error" id="password-error"><%= errors.password %></p>
+        <% } else { %>
+          <p class="hint">At least 8 characters.</p>
+        <% } %>
+      </div>
+
+      <div class="field<%= errors.confirmPassword ? ' field--invalid' : '' %>">
+        <label class="label" for="confirmPassword">Confirm password</label>
+        <div class="input-group">
+          <input class="input" id="confirmPassword" name="confirmPassword" type="password"
+                 autocomplete="new-password" required
+                 <%= errors.confirmPassword ? 'aria-invalid="true" aria-describedby="confirmPassword-error"' : '' %>>
+          <button class="input-group__toggle" type="button" data-toggle-password="confirmPassword"
+                  aria-controls="confirmPassword" aria-pressed="false">Show</button>
+        </div>
+        <% if (errors.confirmPassword) { %>
+          <p class="field-error" id="confirmPassword-error"><%= errors.confirmPassword %></p>
+        <% } %>
+      </div>
+
+      <button class="btn btn-primary btn-block" type="submit">Create account</button>
+    </form>
+
+    <p class="auth-card__foot">Already have an account? <a href="/login">Sign in</a></p>
+  </div>
+</section>

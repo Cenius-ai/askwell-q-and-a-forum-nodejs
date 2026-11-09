@@ -1,0 +1,80 @@
+<%
+  const accepted = question.accepted_answer_id === answer.id;
+  const myAnswerVote = answerVotes[answer.id] || 0;
+  const canAccept = Boolean(user && (isAuthor || user.role === 'moderator') && question.answers.length > 0);
+  const isOwnAnswer = Boolean(user && user.id === answer.author_id);
+  const canDelete = Boolean(isOwnAnswer || (user && user.role === 'moderator'));
+  const acceptedBadgeHref = '/questions/' + question.id + '#answer-' + answer.id;
+%>
+<article class="answer<%= accepted ? ' is-accepted' : '' %>" id="answer-<%= answer.id %>">
+  <div class="answer__votes">
+    <form class="vote-form" method="post" action="/answers/<%= answer.id %>/vote">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="value" value="up">
+      <input type="hidden" name="returnTo" value="/questions/<%= question.id %>">
+      <button class="vote-btn<%= myAnswerVote === 1 ? ' is-on' : '' %>" type="submit"
+              aria-label="Upvote this answer" aria-pressed="<%= myAnswerVote === 1 %>">
+        <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 15V5M5.5 9.5 10 5l4.5 4.5"/></svg>
+      </button>
+    </form>
+    <span class="vote-score"><%= answer.score %></span>
+    <form class="vote-form" method="post" action="/answers/<%= answer.id %>/vote">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="value" value="down">
+      <input type="hidden" name="returnTo" value="/questions/<%= question.id %>">
+      <button class="vote-btn<%= myAnswerVote === -1 ? ' is-on' : '' %>" type="submit"
+              aria-label="Downvote this answer" aria-pressed="<%= myAnswerVote === -1 %>">
+        <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 5v10M5.5 10.5 10 15l4.5-4.5"/></svg>
+      </button>
+    </form>
+
+    <% if (canAccept) { %>
+      <form class="vote-form" method="post" action="/answers/<%= answer.id %>/accept">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button class="accept-btn<%= accepted ? ' is-on' : '' %>" type="submit"
+                aria-pressed="<%= accepted %>"
+                aria-label="<%= accepted ? 'Unaccept this answer' : 'Accept this answer' %>"
+                title="<%= accepted ? 'Unaccept this answer' : 'Accept this answer' %>">
+          <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5 8 14.5 16 5.5"/></svg>
+        </button>
+      </form>
+    <% } else if (accepted) { %>
+      <span class="accept-flag" title="Accepted answer">
+        <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5 8 14.5 16 5.5"/></svg>
+      </span>
+    <% } %>
+  </div>
+
+  <div class="answer__main">
+    <% if (accepted) { %>
+      <p class="accepted-flag-text">
+        <a href="<%= acceptedBadgeHref %>">Accepted answer</a> — this is what the asker found most useful.
+      </p>
+    <% } %>
+    <div class="answer__body"><%= answer.body %></div>
+    <div class="answer__foot">
+      <div class="answer__actions">
+        <span class="meta-text">
+          answered <time datetime="<%= isoTime(answer.created_at) %>"><%= timeAgo(answer.created_at) %></time>
+          <% if (answer.updated_at !== answer.created_at) { %><span class="edited-flag">· edited</span><% } %>
+        </span>
+        <% if (canDelete) { %>
+          <span class="action-links">
+            <% if (isOwnAnswer) { %><a href="/answers/<%= answer.id %>/edit">Edit</a><% } %>
+            <form class="inline-form" method="post" action="/answers/<%= answer.id %>/delete" data-confirm="Delete this answer permanently?">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="link-button is-danger" type="submit">Delete</button>
+            </form>
+          </span>
+        <% } %>
+      </div>
+      <div class="author-block">
+        <span class="avatar avatar--sm" aria-hidden="true"><%= answer.author_name.slice(0, 1).toUpperCase() %></span>
+        <span class="author-block__text">
+          <span class="author-block__name"><%= answer.author_name %></span>
+          <span class="rep" title="Reputation"><%= formatNumber(answer.author_reputation) %></span>
+        </span>
+      </div>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,53 @@
+<section class="auth-shell">
+  <div class="auth-card panel">
+    <p class="eyebrow">Welcome back</p>
+    <h1 class="auth-card__title">Sign in to Askwell</h1>
+    <p class="lede">Ask questions, post answers and vote. Your reputation follows you across the community.</p>
+
+    <% if (error) { %>
+      <div class="alert alert--error" role="alert"><span class="alert__text"><%= error %></span></div>
+    <% } %>
+
+    <div class="demo-callout">
+      <div class="demo-callout__copy">
+        <p class="demo-callout__title">Demo account</p>
+        <p class="demo-callout__creds">Demo: <code>cenius@cenius.ai</code> / <code>cenius</code></p>
+        <p class="demo-callout__note">Signed in as a moderator, so close and duplicate tools are visible too.</p>
+      </div>
+      <form method="post" action="/login/demo">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="next" value="<%= next || '/dashboard' %>">
+        <button class="btn btn-primary btn-sm" type="submit">Sign in as demo</button>
+      </form>
+    </div>
+
+    <form class="form" method="post" action="/login" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="next" value="<%= next || '' %>">
+
+      <div class="field">
+        <label class="label" for="email">Email</label>
+        <input class="input" id="email" name="email" type="email" value="<%= email %>"
+               autocomplete="username" autocapitalize="none" spellcheck="false" required>
+      </div>
+
+      <div class="field">
+        <label class="label" for="password">Password</label>
+        <div class="input-group">
+          <input class="input" id="password" name="password" type="password"
+                 autocomplete="current-password" required>
+          <button class="input-group__toggle" type="button" data-toggle-password="password"
+                  aria-controls="password" aria-pressed="false">Show</button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+    </form>
+
+    <p class="auth-card__foot">
+      New to Askwell? <a href="/signup">Create an account</a>
+      <span aria-hidden="true">·</span>
+      <a href="/">Browse questions without signing in</a>
+    </p>
+  </div>
+</section>

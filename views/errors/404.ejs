@@ -1,0 +1,9 @@
+<section class="error-page panel">
+  <p class="error-page__code">404</p>
+  <h1 class="error-page__title">That page is not here</h1>
+  <p class="error-page__text"><%= typeof message !== 'undefined' && message ? message : 'The link may be old, or the question may have been deleted.' %></p>
+  <div class="error-page__actions">
+    <a class="btn btn-primary" href="/">Back to questions</a>
+    <a class="btn btn-ghost" href="/tags">Browse tags</a>
+  </div>
+</section>

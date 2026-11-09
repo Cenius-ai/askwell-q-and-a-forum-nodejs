@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= pageTitle ? `${pageTitle} · Askwell Q and A Forum` : 'Askwell Q and A Forum — self-hosted questions and answers' %></title>
+  <meta name="description" content="Askwell is a self-hosted Q and A forum: ask questions, post answers, vote, accept the best answer and follow tags.">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="progress-thread" id="progress-thread" aria-hidden="true"></div>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <%- include('partials/header') %>
+  <main id="main" class="shell">
+    <%- include('partials/flash') %>
+    <%- body %>
+  </main>
+  <%- include('partials/footer') %>
+  <script src="/js/app.js" defer></script>
+</body>
+</html>

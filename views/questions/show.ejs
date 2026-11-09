@@ -1,0 +1,162 @@
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="/">Questions</a>
+  <span aria-hidden="true">/</span>
+  <span>Question #<%= question.id %></span>
+</nav>
+
+<article class="panel post">
+  <div class="post__grid">
+    <div class="vote-column" aria-label="Vote on this question">
+      <form class="vote-form" method="post" action="/questions/<%= question.id %>/vote">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="value" value="up">
+        <input type="hidden" name="returnTo" value="/questions/<%= question.id %>">
+        <button class="vote-btn<%= myQuestionVote === 1 ? ' is-on' : '' %>" type="submit"
+                aria-label="Upvote this question" aria-pressed="<%= myQuestionVote === 1 %>">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 15V5M5.5 9.5 10 5l4.5 4.5"/></svg>
+        </button>
+      </form>
+      <span class="vote-score vote-score--lg" data-flash="<%= voteFlash || '' %>"><%= question.score %></span>
+      <form class="vote-form" method="post" action="/questions/<%= question.id %>/vote">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="value" value="down">
+        <input type="hidden" name="returnTo" value="/questions/<%= question.id %>">
+        <button class="vote-btn<%= myQuestionVote === -1 ? ' is-on' : '' %>" type="submit"
+                aria-label="Downvote this question" aria-pressed="<%= myQuestionVote === -1 %>">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 5v10M5.5 10.5 10 15l4.5-4.5"/></svg>
+        </button>
+      </form>
+      <% if (!user) { %>
+        <p class="vote-hint"><a href="/login?next=%2Fquestions%2F<%= question.id %>">Sign in</a> to vote</p>
+      <% } %>
+    </div>
+
+    <div class="post__main">
+      <h1 class="post__title"><%= question.title %></h1>
+
+      <div class="post__meta">
+        <span class="meta-text">Asked <time datetime="<%= isoTime(question.created_at) %>" title="<%= formatDate(question.created_at) %>"><%= timeAgo(question.created_at) %></time></span>
+        <% if (question.updated_at !== question.created_at) { %>
+          <span class="meta-text">· edited <time datetime="<%= isoTime(question.updated_at) %>"><%= timeAgo(question.updated_at) %></time></span>
+        <% } %>
+        <span class="meta-text">· <%= question.answer_count %> answer<%= question.answer_count === 1 ? '' : 's' %></span>
+      </div>
+
+      <% if (question.closed_at) { %>
+        <div class="banner banner--closed" role="status">
+          <p class="banner__title">
+            Closed <% if (question.closedBy) { %>by <%= question.closedBy.display_name %><% } %>
+            <time datetime="<%= isoTime(question.closed_at) %>"><%= timeAgo(question.closed_at) %></time>
+          </p>
+          <p class="banner__text"><%= question.closed_reason %></p>
+          <% if (question.duplicateOf) { %>
+            <p class="banner__text">
+              Duplicate of
+              <a class="banner__link" href="/questions/<%= question.duplicateOf.id %>"><%= question.duplicateOf.title %></a>
+              — read the accepted answer there.
+            </p>
+          <% } %>
+          <p class="banner__note">New answers are disabled while the question is closed.</p>
+        </div>
+      <% } else if (question.duplicateOf) { %>
+        <div class="banner banner--duplicate" role="status">
+          <p class="banner__title">Marked as a duplicate</p>
+          <p class="banner__text">
+            This question is already answered by
+            <a class="banner__link" href="/questions/<%= question.duplicateOf.id %>"><%= question.duplicateOf.title %></a>.
+          </p>
+        </div>
+      <% } %>
+
+      <div class="post__body"><%= question.body %></div>
+
+      <div class="tag-list post__tags">
+        <% question.tags.forEach(function (tag) { %>
+          <%- include('../partials/tag-chip', { tag: tag, count: tag.question_count }) %>
+        <% }) %>
+      </div>
+
+      <div class="post__foot">
+        <div class="post__actions">
+          <% if (isAuthor || isModerator) { %>
+            <span class="action-links">
+              <% if (isAuthor) { %><a href="/questions/<%= question.id %>/edit">Edit question</a><% } %>
+              <form class="inline-form" method="post" action="/questions/<%= question.id %>/delete"
+                    data-confirm="Delete this question and all of its answers permanently?">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button class="link-button is-danger" type="submit">Delete</button>
+              </form>
+            </span>
+          <% } %>
+        </div>
+
+        <div class="author-block author-block--lg">
+          <span class="avatar" aria-hidden="true"><%= question.author_name.slice(0, 1).toUpperCase() %></span>
+          <span class="author-block__text">
+            <span class="author-block__name"><%= question.author_name %></span>
+            <span class="author-block__meta">
+              <span class="rep" title="Reputation"><%= formatNumber(question.author_reputation) %></span>
+              <span class="meta-text">asked <time datetime="<%= isoTime(question.created_at) %>"><%= timeAgo(question.created_at) %></time></span>
+            </span>
+          </span>
+        </div>
+      </div>
+
+      <%- include('../partials/close-form', { question: question, isModerator: isModerator, closeReasons: closeReasons }) %>
+    </div>
+  </div>
+</article>
+
+<section class="answers-section" aria-labelledby="answers-heading">
+  <div class="answers-head">
+    <h2 id="answers-heading"><%= question.answers.length %> answer<%= question.answers.length === 1 ? '' : 's' %></h2>
+    <span class="meta-text">Accepted first, then highest score, then newest</span>
+  </div>
+
+  <% if (question.answers.length === 0) { %>
+    <div class="panel empty">
+      <p class="empty__title">No answers yet</p>
+      <p class="empty__text">Know how this is solved? The first answer here is the one the asker can accept.</p>
+      <% if (user && !question.closed_at) { %>
+        <a class="btn btn-primary btn-sm" href="#answer-form">Write the first answer</a>
+      <% } else if (!user) { %>
+        <a class="btn btn-primary btn-sm" href="/login?next=%2Fquestions%2F<%= question.id %>">Sign in to answer</a>
+      <% } %>
+    </div>
+  <% } else { %>
+    <% question.answers.forEach(function (answer) { %>
+      <%- include('../partials/answer', { answer: answer, question: question, answerVotes: answerVotes }) %>
+    <% }) %>
+  <% } %>
+</section>
+
+<section class="answer-composer" id="answer-form" aria-labelledby="answer-form-heading">
+  <% if (question.closed_at) { %>
+    <div class="panel notice">
+      <h2 class="notice__title" id="answer-form-heading">Answers are closed</h2>
+      <p class="notice__text">This question was closed<%= question.closedBy ? ' by ' + question.closedBy.display_name : '' %>. Moderators can reopen it if new information shows up.</p>
+    </div>
+  <% } else if (!user) { %>
+    <div class="panel notice">
+      <h2 class="notice__title" id="answer-form-heading">Sign in to answer</h2>
+      <p class="notice__text">Answers are public to read, but posting needs an account so reputation and editing work.</p>
+      <a class="btn btn-primary btn-sm" href="/login?next=%2Fquestions%2F<%= question.id %>">Sign in</a>
+      <a class="btn btn-ghost btn-sm" href="/signup">Create an account</a>
+    </div>
+  <% } else { %>
+    <form class="panel form" method="post" action="/questions/<%= question.id %>/answers" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <h2 class="notice__title" id="answer-form-heading">Your answer</h2>
+      <div class="field">
+        <label class="label" for="answer-body">Answer</label>
+        <textarea class="input textarea" id="answer-body" name="body" rows="7" required
+                  placeholder="Explain the fix, then why it works."></textarea>
+        <p class="hint">At least 10 characters. Plain text; line breaks are preserved.</p>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Post answer</button>
+        <span class="meta-text">Posting as <strong><%= user.display_name %></strong></span>
+      </div>
+    </form>
+  <% } %>
+</section>

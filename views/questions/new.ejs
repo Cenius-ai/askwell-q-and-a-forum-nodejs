@@ -1,0 +1,75 @@
+<section class="page-head">
+  <p class="eyebrow">Ask the community</p>
+  <h1>Ask a question</h1>
+  <p class="lede">A good title is a complete question. Add the detail you would want if you were answering it.</p>
+</section>
+
+<div class="two-col two-col--form">
+  <form class="panel form" method="post" action="/questions" novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <div class="field<%= errors.title ? ' field--invalid' : '' %>">
+      <label class="label" for="title">Title</label>
+      <input class="input input--title" id="title" name="title" type="text" value="<%= values.title %>"
+             maxlength="140" required placeholder="e.g. Why does my Express session disappear on the second request?"
+             <%= errors.title ? 'aria-invalid="true" aria-describedby="title-error"' : '' %>>
+      <% if (errors.title) { %>
+        <p class="field-error" id="title-error"><%= errors.title %></p>
+      <% } else { %>
+        <p class="hint">8–140 characters. Imagine you are searching for the answer.</p>
+      <% } %>
+    </div>
+
+    <div class="field<%= errors.body ? ' field--invalid' : '' %>">
+      <label class="label" for="body">What is happening?</label>
+      <textarea class="input textarea" id="body" name="body" rows="10" required
+                <%= errors.body ? 'aria-invalid="true" aria-describedby="body-error"' : '' %>><%= values.body %></textarea>
+      <% if (errors.body) { %>
+        <p class="field-error" id="body-error"><%= errors.body %></p>
+      <% } else { %>
+        <p class="hint">At least 20 characters. Paste code or errors as plain text.</p>
+      <% } %>
+    </div>
+
+    <div class="field<%= errors.tags ? ' field--invalid' : '' %>">
+      <label class="label" for="tags">Tags</label>
+      <input class="input" id="tags" name="tags" type="text" value="<%= values.tags %>"
+             placeholder="e.g. sessions, express" autocomplete="off"
+             <%= errors.tags ? 'aria-invalid="true" aria-describedby="tags-error"' : '' %>>
+      <% if (errors.tags) { %>
+        <p class="field-error" id="tags-error"><%= errors.tags %></p>
+      <% } else { %>
+        <p class="hint">Comma separated, up to 5. New tags are created automatically — or click a tag on the right to add it.</p>
+      <% } %>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Post question</button>
+      <a class="btn btn-ghost" href="/">Cancel</a>
+    </div>
+  </form>
+
+  <aside class="sidebar">
+    <section class="panel">
+      <h2 class="panel__title">What makes a good question</h2>
+      <ul class="tips">
+        <li>State the goal in the title, not the symptom.</li>
+        <li>Include what you already tried and what happened.</li>
+        <li>Paste the exact error text — plain text is fine.</li>
+        <li>Tag with the runtime and the library, not the company.</li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel__title">Existing tags</h2>
+      <div class="tag-list">
+        <% allTags.forEach(function (tag) { %>
+          <button type="button" class="tag-chip tag-chip--button" data-add-tag="<%= tag.name %>">
+            <span class="tag-chip__name"><%= tag.name %></span>
+            <span class="tag-chip__count"><%= tag.question_count %></span>
+          </button>
+        <% }) %>
+      </div>
+    </section>
+  </aside>
+</div>

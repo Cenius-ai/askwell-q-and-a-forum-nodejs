@@ -1,0 +1,89 @@
+<section class="hero">
+  <div class="hero__copy">
+    <p class="eyebrow">Self-hosted knowledge exchange</p>
+    <h1>Questions from your community</h1>
+    <p class="lede">
+      Askwell keeps answers findable: one question per page, one accepted answer, tags that show what
+      people are actually working on. Everything runs on your own server.
+    </p>
+    <div class="hero__actions">
+      <a class="btn btn-primary" href="/questions/new">Ask a question</a>
+      <a class="btn btn-ghost" href="/tags">Browse tags</a>
+    </div>
+  </div>
+</section>
+
+<section class="pulse-band" aria-label="Community at a glance">
+  <a class="pulse-cell" href="/">
+    <span class="pulse-cell__value"><%= formatNumber(stats.questions) %></span>
+    <span class="pulse-cell__label">Questions</span>
+  </a>
+  <div class="pulse-cell">
+    <span class="pulse-cell__value"><%= formatNumber(stats.answers) %></span>
+    <span class="pulse-cell__label">Answers</span>
+  </div>
+  <div class="pulse-cell">
+    <span class="pulse-cell__value"><%= formatNumber(stats.members) %></span>
+    <span class="pulse-cell__label">Members</span>
+  </div>
+  <a class="pulse-cell" href="/tags">
+    <span class="pulse-cell__value"><%= formatNumber(stats.tags) %></span>
+    <span class="pulse-cell__label">Tags</span>
+  </a>
+</section>
+
+<div class="two-col">
+  <section class="panel" aria-labelledby="newest-heading">
+    <div class="panel__head">
+      <h2 class="panel__title" id="newest-heading">Newest questions</h2>
+      <span class="panel__meta"><%= questions.length %> listed</span>
+    </div>
+
+    <% if (questions.length === 0) { %>
+      <div class="empty">
+        <p class="empty__title">No questions yet</p>
+        <p class="empty__text">Your community is one good question away from its first answer.</p>
+        <a class="btn btn-primary btn-sm" href="/questions/new">Ask the first question</a>
+      </div>
+    <% } else { %>
+      <ol class="question-list">
+        <% questions.forEach(function (question) { %>
+          <%- include('partials/question-row', { question: question }) %>
+        <% }) %>
+      </ol>
+    <% } %>
+  </section>
+
+  <aside class="sidebar" aria-label="Community sidebar">
+    <section class="panel">
+      <div class="panel__head">
+        <h2 class="panel__title">Popular tags</h2>
+        <a class="panel__link" href="/tags">All tags</a>
+      </div>
+      <div class="tag-list">
+        <% popularTags.forEach(function (tag) { %>
+          <%- include('partials/tag-chip', { tag: tag, count: tag.question_count }) %>
+        <% }) %>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__head">
+        <h2 class="panel__title">Top members</h2>
+      </div>
+      <ol class="member-list">
+        <% topMembers.forEach(function (member, index) { %>
+          <li class="member-row">
+            <span class="member-row__rank" aria-hidden="true"><%= index + 1 %></span>
+            <span class="avatar avatar--sm" aria-hidden="true"><%= member.display_name.slice(0, 1).toUpperCase() %></span>
+            <span class="member-row__body">
+              <span class="member-row__name"><%= member.display_name %></span>
+              <span class="meta-text"><%= member.question_count %> questions · <%= member.answer_count %> answers</span>
+            </span>
+            <span class="rep" title="Reputation"><%= formatNumber(member.reputation) %></span>
+          </li>
+        <% }) %>
+      </ol>
+    </section>
+  </aside>
+</div>

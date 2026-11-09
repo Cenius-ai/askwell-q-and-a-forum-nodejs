@@ -1,0 +1,45 @@
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="brand" href="/" aria-label="Askwell Q and A Forum — home">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8A2.5 2.5 0 0 1 17.5 16H9l-5 4.5V5.5Z"/>
+          <path d="M8.5 7.5h7M8.5 11h4.5"/>
+        </svg>
+      </span>
+      <span class="brand__text">
+        <span class="brand__name">Askwell</span>
+        <span class="brand__sub">Q &amp; A Forum</span>
+      </span>
+    </a>
+
+    <nav class="nav" aria-label="Main navigation">
+      <a class="nav__link<%= currentPath === '/' ? ' is-active' : '' %>" href="/"<%= currentPath === '/' ? ' aria-current="page"' : '' %>>Questions</a>
+      <a class="nav__link<%= currentPath.startsWith('/tags') ? ' is-active' : '' %>" href="/tags"<%= currentPath.startsWith('/tags') ? ' aria-current="page"' : '' %>>Tags</a>
+      <% if (user) { %>
+        <a class="nav__link<%= currentPath.startsWith('/dashboard') ? ' is-active' : '' %>" href="/dashboard"<%= currentPath.startsWith('/dashboard') ? ' aria-current="page"' : '' %>>Dashboard</a>
+      <% } %>
+    </nav>
+
+    <div class="header-actions">
+      <a class="btn btn-primary btn-sm" href="/questions/new">Ask a question</a>
+      <% if (user) { %>
+        <div class="user-chip">
+          <a class="user-chip__id" href="/dashboard" title="Your dashboard">
+            <span class="avatar" aria-hidden="true"><%= user.display_name.slice(0, 1).toUpperCase() %></span>
+            <span class="user-chip__text">
+              <span class="user-chip__name"><%= user.display_name %></span>
+              <span class="user-chip__rep"><%= formatNumber(user.reputation) %> rep<% if (user.role === 'moderator') { %> · mod<% } %></span>
+            </span>
+          </a>
+          <form class="inline-form" method="post" action="/logout">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="btn btn-quiet btn-sm" type="submit">Sign out</button>
+          </form>
+        </div>
+      <% } else { %>
+        <a class="btn btn-ghost btn-sm" href="/login">Sign in</a>
+      <% } %>
+    </div>
+  </div>
+</header>

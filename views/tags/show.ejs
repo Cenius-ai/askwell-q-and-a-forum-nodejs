@@ -1,0 +1,52 @@
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="/tags">Tags</a>
+  <span aria-hidden="true">/</span>
+  <span>#<%= tag.name %></span>
+</nav>
+
+<section class="page-head page-head--row">
+  <div>
+    <p class="eyebrow">Tag</p>
+    <h1>#<%= tag.name %></h1>
+    <p class="lede"><%= tag.description || 'No description yet — the questions define it.' %></p>
+    <p class="tag-meta">
+      <span class="count-pill"><strong><%= tag.question_count %></strong> question<%= tag.question_count === 1 ? '' : 's' %></span>
+      <span class="count-pill"><strong><%= tag.followers %></strong> follower<%= tag.followers === 1 ? '' : 's' %></span>
+    </p>
+  </div>
+  <div class="page-head__actions">
+    <% if (user) { %>
+      <form method="post" action="/tags/<%= tag.id %>/follow">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="returnTo" value="/tags/<%= tag.slug %>">
+        <button class="btn <%= following ? 'btn-ghost is-following' : 'btn-primary' %>" type="submit">
+          <%= following ? 'Following' : 'Follow tag' %>
+        </button>
+      </form>
+    <% } else { %>
+      <a class="btn btn-primary" href="/login?next=%2Ftags%2F<%= tag.slug %>">Follow tag</a>
+    <% } %>
+    <a class="btn btn-quiet" href="/questions/new">Ask with this tag</a>
+  </div>
+</section>
+
+<section class="panel" aria-labelledby="tag-questions-heading">
+  <div class="panel__head">
+    <h2 class="panel__title" id="tag-questions-heading">Questions tagged #<%= tag.name %></h2>
+    <span class="panel__meta"><%= questions.length %> listed</span>
+  </div>
+
+  <% if (questions.length === 0) { %>
+    <div class="empty">
+      <p class="empty__title">No questions with this tag yet</p>
+      <p class="empty__text">Be the first to ask something the <%= tag.name %> crowd can answer.</p>
+      <a class="btn btn-primary btn-sm" href="/questions/new">Ask a question with #<%= tag.name %></a>
+    </div>
+  <% } else { %>
+    <ol class="question-list">
+      <% questions.forEach(function (question) { %>
+        <%- include('../partials/question-row', { question: question }) %>
+      <% }) %>
+    </ol>
+  <% } %>
+</section>
